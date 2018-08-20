@@ -1,3 +1,6 @@
-using NotSoSimpleMultigrid
+using NotSoSimpleMultigrid, Base.Test, Requires
 
-include("test_semicoarsening.jl")
+include("test_utils.jl")
+
+include("test_convergence.jl")
+include("test_multigrid.jl")
