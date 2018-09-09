@@ -1,5 +1,6 @@
 # test_multigrid.jl : test multigrid implementation
 
+
 g(x,y) = 1 + sin.(π*x)*sin.(π*y)'
 f(n,m) = g(linspace(0,1,n+1),linspace(0,1,m+1))
 p₁(n,m) = laplace2d(n,m)
