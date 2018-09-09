@@ -20,7 +20,7 @@ Options
 * ngrids   : total number of grids to use, default is `min.(⌊log₂(sz)⌋)`
 * smoother : smoother, can be `GaussSeidel()` of `Jacobi()`
 """
-MultigridMethod(A::AbstractMatrix, sz::NTuple, cycle_type::MultigridCycle; max_iter::Int=20, R_op::TransferKind=FullWeighting(), P_op::TransferKind=FullWeighting(), ngrids=floor.(Int,log2.(sz)), smoother::Smoother=GaussSeidel()) = MultigridIterable(coarsen(A,sz,R_op,P_op,ngrids),max_iter,cycle_type,smoother,Float64[])
+MultigridMethod(A::AbstractMatrix, sz::NTuple, cycle_type::MultigridCycle; max_iter::Int=20, R_op::TransferKind=FullWeighting(), P_op::TransferKind=FullWeighting(), ngrids=factor_twos.(sz), smoother::Smoother=GaussSeidel()) = MultigridIterable(coarsen(A,sz,R_op,P_op,ngrids),max_iter,cycle_type,smoother,Float64[])
 
 """
 V_cycle(A, sz)
@@ -79,7 +79,7 @@ function μ_cycle!(grids::Array{G} where {G<:Grid}, μ::Int, ν₁::Int, ν₂::
     for idx in grids_at_level(size(grids),grid_ptr)
         smooth!(grids[idx...],ν₁,smoother)
     end
-    if grid_ptr == sum(size(grids))-1
+    if grid_ptr == sum(size(grids).-1)+1
         grids[end].x .= grids[end].A\grids[end].b # exact solve
     else
         for idx in grids_at_level(size(grids),grid_ptr+1)
@@ -105,7 +105,7 @@ high_freq_mode(dir,sz) = vec(Int[-iseven(i[dir])+isodd(i[dir]) for i in Base.pro
 
 function F_cycle!(grids::Array{G} where {G<:Grid}, ν₀::Int, ν₁::Int, ν₂::Int, grid_ptr::Int, smoother::Smoother)
     d = ndims(grids)
-    if grid_ptr == sum(size(grids))-1
+    if grid_ptr == sum(size(grids).-1)+1
         grids[grid_ptr].x .= zeros(grids[grid_ptr].x)
     else
         for idx in grids_at_level(size(grids),grid_ptr+1)
