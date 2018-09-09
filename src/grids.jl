@@ -9,7 +9,7 @@ Coarsen the matrix `A` using `R_op` as restriction operator and `P_op` as interp
 function coarsen(A::SparseMatrixCSC, sz::NTuple, R_op::TransferKind, P_op::TransferKind, ngrids::NTuple)
     @assert length(sz) == length(ngrids)
     d = length(ngrids)
-    grids = Matrix{Grid{typeof(A),Vector{eltype(A)},NTuple{d,typeof(A)},typeof(sz)}}(ngrids...)
+    grids = Array{Grid{typeof(A),Vector{eltype(A)},NTuple{d,typeof(A)},typeof(sz)},length(sz)}(ngrids...)
     grids[1] = Grid(A,zero_x(A),zero_x(A),tuple(R̃.(1:d,R_op,sz...)...),ntuple(i->spzeros(0,0),d),sz)
     for (idx,i) in enumerate(Base.Iterators.drop(Base.product(range.(1,ngrids)...),1))
         sz_c = sz.>>(i.-1)

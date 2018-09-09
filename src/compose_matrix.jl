@@ -20,4 +20,4 @@ anisotropic3d(ϵ₁, ϵ₂, n, m, l)
 
 3d anisotropic Laplacian on [0,1]^3 using n x m x l points and anisotropy numbers ϵ₁ and ϵ₂
 """
-anisotropic3d(ϵ₁, ϵ₂, n, m, l) = SArray{Tuple{3,3,3}}([0 0 0 0 -l^2 0 0 0 0 0 -ϵ₂*m^2 0 -ϵ₁*n^2 2(ϵ₁*n^2+ϵ₂*m^2+l^2) -ϵ₁*n^2 0 -ϵ₂*m^2 0 0 0 0 0 -l^2 0 0 0 0], n, m, l)
+anisotropic3d(ϵ₁, ϵ₂, n, m, l) = stencil2mat(SArray{Tuple{3,3,3}}([0 0 0 0 -l^2 0 0 0 0 0 -ϵ₂*m^2 0 -ϵ₁*n^2 2(ϵ₁*n^2+ϵ₂*m^2+l^2) -ϵ₁*n^2 0 -ϵ₂*m^2 0 0 0 0 0 -l^2 0 0 0 0]), n, m, l)

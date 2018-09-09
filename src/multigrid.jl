@@ -79,7 +79,7 @@ function μ_cycle!(grids::Array{G} where {G<:Grid}, μ::Int, ν₁::Int, ν₂::
     for idx in grids_at_level(size(grids),grid_ptr)
         smooth!(grids[idx...],ν₁,smoother)
     end
-    if grid_ptr == sum(size(grids))-1
+    if grid_ptr == sum(size(grids).-1)+1
         grids[end].x .= grids[end].A\grids[end].b # exact solve
     else
         for idx in grids_at_level(size(grids),grid_ptr+1)
@@ -105,7 +105,7 @@ high_freq_mode(dir,sz) = vec(Int[-iseven(i[dir])+isodd(i[dir]) for i in Base.pro
 
 function F_cycle!(grids::Array{G} where {G<:Grid}, ν₀::Int, ν₁::Int, ν₂::Int, grid_ptr::Int, smoother::Smoother)
     d = ndims(grids)
-    if grid_ptr == sum(size(grids))-1
+    if grid_ptr == sum(size(grids).-1)+1
         grids[grid_ptr].x .= zeros(grids[grid_ptr].x)
     else
         for idx in grids_at_level(size(grids),grid_ptr+1)

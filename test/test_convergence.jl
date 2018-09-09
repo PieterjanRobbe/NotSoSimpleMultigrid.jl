@@ -16,11 +16,9 @@ end
         for β in [0 15 30 45]
             (A,b) = get_problem(ϵ,β)
             A.grids[1].b .= b # copy rhs
-            tol = 1/prod(A.grids[1].sz)*SimpleMultigrid.norm_of_residu(A.grids[1]) # target norm of residu is O(h²)
             push!(A.resnorm,SimpleMultigrid.norm_of_residu(A.grids[1])) # log convergence history
             for i in 1:15
-                SimpleMultigrid.cycle!(A)
-                push!(A.resnorm,SimpleMultigrid.norm_of_residu(A.grids[1])) # log convergence history
+                SimpleMultigrid.next(A,i)
             end
             if !( ( ϵ == 1e-8 ) && ( β == 45 ) ) # known failure for last case in 15 iters
                 @test A.resnorm[end] < 1/256^2
