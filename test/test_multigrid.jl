@@ -15,7 +15,7 @@ p₂₃(n) = elliptic3d(f(n+1,n+1,n+1))
 p₃₂(n) = anisotropic2d(1e-4,n,n)
 p₃₃(n) = anisotropic3d(1e-4,1,n,n,n)
 
-p₄₂(n) = anisotropic2d(1e-4*pi/180,n,n)
+p₄₂(n) = anisotropic2d(1e-4,10*pi/180,n,n)
 
 for (d,d_name) in zip(2:3,["₂","₃"])
     @testset "Default Multigrid methods for $(d)D anisotropic problems" begin
