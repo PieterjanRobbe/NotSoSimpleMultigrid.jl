@@ -11,7 +11,7 @@ export laplace2d, elliptic2d, anisotropic2d, rotated_anisotropic2d, laplace3d, e
 export Injection, FullWeighting, Cubic
 export GaussSeidel, Jacobi
 export coarsen
-export MultigridIterable, V_cycle, W_cycle, F_cycle, \
+export MultigridIterable, V, W, F, V_cycle, W_cycle, F_cycle, \
 
 # import statements
 #import Base:
