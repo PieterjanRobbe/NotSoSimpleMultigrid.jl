@@ -3,7 +3,7 @@
 # log resnorm
 function log(mg,ϵ,β)
     println(string("+","-"^30,"+"))
-    println(string("|"," "^4,@sprintf("ϵ = %6.3e, β = %2.0f ",ϵ,β)" "^4,"|"))
+    println(string("|"," "^4,@sprintf("ϵ = %6.3e, β = %2.0f ",ϵ,β)," "^4,"|"))
     println(string("+","-"^9,"+","-"^20,"+"))
     println(string("| V-cycle |  |rʰ|"," "^7,"ratio","  |"))
     println(string("+","-"^9,"+","-"^20,"+"))

@@ -11,13 +11,13 @@ for (d,d_name) in zip(2:3,["₂","₃"])
                     println("+-----------------------+")
                     println("|         $(method_name)       |")
                     println("+-----------------------+")
-                    for n in 2.^(1:(12-2d))
+                    for n in 2 .^(1:(12-2d))
                         print("n = $(n)...")
                         A = method(eval(Symbol(problem,d_name))(n),ntuple(i->n,d))
                         b = ones(prod([n-1 for i in 1:d]))
                         x = A\b 
                         @test A.resnorm[end] < 1/n^d
-                        println("done ($(length(A.resnorm-1)) iterations)")
+                        println("done ($(length(A.resnorm)-1) iterations)")
                     end 
                 end 
             end 

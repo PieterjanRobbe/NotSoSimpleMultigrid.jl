@@ -1,4 +1,4 @@
-using NotSoSimpleMultigrid, Base.Test, Requires
+using NotSoSimpleMultigrid, Test, Requires, Printf
 
 include("test_utils.jl")
 include("test_problems.jl")
