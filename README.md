@@ -6,7 +6,7 @@ Simple implementation of geometric semi-coarsened multigrid methods.
 ## Installation
 
 ```julia
-Pkg.clone("https://github.com/PieterjanRobbe/NotSoSimpleMultigrid.jl")
+] add https://github.com/PieterjanRobbe/NotSoSimpleMultigrid.jl
 ```
 
 Load the package in Julia by
