@@ -1,6 +1,6 @@
 name = "NotSoSimpleMultigrid"
 uuid = "bc769cb7-f249-5bba-802a-79f19cb249ec"
-version = "v0.0.0"
+version = "v1.0.0"
 
 [deps]
 LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
