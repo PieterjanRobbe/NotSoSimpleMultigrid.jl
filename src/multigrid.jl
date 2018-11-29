@@ -72,62 +72,68 @@ For other options, see `MultigridMethod`.
 F_cycle(A::Union{AbstractMatrix,Function}, sz::NTuple; kwargs...) = MultigridMethod(A,sz,F(); max_iter=1, kwargs...)
 
 # semicoarsening cycle
-grids_at_level(sz::Tuple,ℓ::Int) = Base.Iterators.filter(idx->sum(idx.-1)==ℓ-1,Base.product(UnitRange.(1,sz)...))
+filter_at(R, s) = Base.Iterators.filter(i->sum(i.I)==s, R)
 
-children(idx) = Base.Iterators.filter(i->all(i[2].>0),enumerate(broadcast(-,idx,δ.(1:length(idx),length(idx)))))
+filter_fit(I1, Rall, R) = Base.Iterators.filter(i->i[2] ∈ Rall, enumerate(R))
 
-parents(idx,sz) = Base.Iterators.filter(i->all(i[2]<=sz),enumerate(broadcast(+,idx,δ.(1:length(idx),length(idx)))))
+child_iter(Rall, I1, I) = filter_fit(I1, Rall, Base.Iterators.reverse(filter_at(CartesianIndices(UnitRange.(Tuple(I-I1), Tuple(I))), sum(Tuple(I))-1)))
+
+parent_iter(Rall, I1, I) = filter_fit(I1, Rall, filter_at(CartesianIndices(UnitRange.(Tuple(I), Tuple(I+I1))), sum(Tuple(I))+1))
+
+grids_at_level(R::CartesianIndices{d}, s) where d = filter_at(R, s+d-1)
 
 function μ_cycle!(grids::Array{G} where {G<:Grid}, μ::Int, ν₁::Int, ν₂::Int, grid_ptr::Int, smoother::Smoother, damping::Float64)
-    d = ndims(grids)
-    for idx in grids_at_level(size(grids),grid_ptr)
-        smooth!(grids[idx...],ν₁,smoother)
+	R = CartesianIndices(size(grids))
+	I1, Iend = first(R), last(R)
+    for I in grids_at_level(R, grid_ptr)
+        smooth!(grids[I], ν₁, smoother)
     end
-    if grid_ptr == sum(size(grids).-1)+1
-        grids[end].x .= grids[end].A\grids[end].b # exact solve
+    if grid_ptr == sum(Tuple(Iend-I1)) + 1
+		grids[Iend].x .= grids[Iend].A\grids[Iend].b # exact solve
     else
-        for idx in grids_at_level(size(grids),grid_ptr+1)
-            child_iter = Base.Iterators.filter(i->all(i[2].>=1),enumerate([idx.-δ(i,d) for i in 1:d]))
-            grids[idx...].b .= mean(map(i->grids[last(i)...].R[first(i)]*residu(grids[last(i)...]),child_iter))
-            grids[idx...].x .= zero(grids[idx...].x)
+        for I in grids_at_level(R, grid_ptr+1)
+			R_child = child_iter(R, I1, I)
+			grids[I].b .= mean(map(i->grids[last(i)].R[first(i)]*residu(grids[last(i)]), R_child))
+			fill!(grids[I].x, zero(eltype(grids[I].x)))
         end
-        μ_cycle!(grids,μ,ν₁,ν₂,grid_ptr+1,smoother,damping)
-        for idx in grids_at_level(size(grids),grid_ptr)
-            parent_iter = Base.Iterators.filter(i->all(i[2].<=size(grids)),enumerate([idx.+δ(i,d) for i in 1:d]))
+        μ_cycle!(grids, μ, ν₁, ν₂, grid_ptr+1, smoother, damping)
+        for I in grids_at_level(R, grid_ptr)
+			R_parent = parent_iter(R, I1, I)
             # matrix-dependent prolongation
-            λ = map(i->grids[idx...].A*high_freq_mode(first(i),grids[idx...].sz),parent_iter)
-            λ² = broadcast(i->broadcast(j->j^2,i),λ)
-            ω = map(i->λ²[i]./sum(λ²),1:length(λ)) # weight factors from [Naik, Van Rosendale]
-            ip = map(i->grids[last(i)...].P[first(i)]*grids[last(i)...].x,parent_iter)
-            grids[idx...].x .+= damping*sum(map(i->ω[i].*ip[i],1:length(ω)))
-            smooth!(grids[idx...],ν₂,smoother)
+			λ = map(i->grids[I].A * high_freq_mode(first(i), grids[I].sz), R_parent)
+			λ² = broadcast(i->broadcast(j->j^2, i), λ)
+			ω = map(i->λ²[i]./sum(λ²), 1:length(λ)) # weight factors from [Naik, Van Rosendale]
+			ip = map(i->grids[last(i)].P[first(i)]*grids[last(i)].x, R_parent)
+			grids[I].x .+= damping*sum(map(i->ω[i].*ip[i], 1:length(ω)))
+            smooth!(grids[I], ν₂, smoother)
         end
     end
 end
 
-high_freq_mode(dir,sz) = vec(Int[-iseven(i[dir])+isodd(i[dir]) for i in Base.product(UnitRange.(1,sz.-1)...)])
+high_freq_mode(dir,sz) = view(map(i->-iseven(i[dir])+isodd(i[dir]), CartesianIndices(sz.-1)), :)
 
 function F_cycle!(grids::Array{G} where {G<:Grid}, ν₀::Int, ν₁::Int, ν₂::Int, grid_ptr::Int, smoother::Smoother, damping::Float64)
-    d = ndims(grids)
-    if grid_ptr == sum(size(grids).-1)+1
-        grids[grid_ptr].x .= zero(grids[grid_ptr].x)
-    else
-        for idx in grids_at_level(size(grids),grid_ptr+1)
-            child_iter = Base.Iterators.filter(i->all(i[2].>=1),enumerate([idx.-δ(i,d) for i in 1:d]))
-            grids[idx...].b .= mean(map(i->grids[last(i)...].R[first(i)]*grids[last(i)...].b,child_iter))
-        end
-        F_cycle!(grids,ν₀,ν₁,ν₂,grid_ptr+1,smoother, damping)
-        for idx in grids_at_level(size(grids),grid_ptr)
-            parent_iter = Base.Iterators.filter(i->all(i[2].<=size(grids)),enumerate([idx.+δ(i,d) for i in 1:d]))
+	R = CartesianIndices(size(grids))
+	I1, Iend = first(R), last(R)
+    if grid_ptr == sum(Tuple(Iend-I1)) + 1
+		fill!(grids[grid_ptr].x, zero(eltype(grids[grid_ptr].x)))
+	else
+		for I in grids_at_level(R, grid_ptr+1)
+			R_child = child_iter(R, I1, I)
+			grids[I].b .= mean(map(i->grids[last(i)].R[first(i)]*grids[last(i)].b, R_child))
+		end
+        F_cycle!(grids, ν₀, ν₁, ν₂, grid_ptr+1, smoother, damping)
+		for I in grids_at_level(R, grid_ptr)
+			R_parent = parent_iter(R, I1, I)
             # matrix-dependent prolongation
-            λ = map(i->grids[idx...].A*high_freq_mode(first(i),grids[idx...].sz),parent_iter)
-            λ² = broadcast(i->broadcast(j->j^2,i),λ)
-            ω = map(i->λ²[i]./sum(λ²),1:length(λ)) # weight factors from [Naik, Van Rosendale]
-            ip = map(i->P̃(first(i),Cubic(),grids[last(i)...].sz...)*grids[last(i)...].x,parent_iter) # cubic
-            grids[idx...].x .= sum(map(i->ω[i].*ip[i],1:length(ω)))
-        end
+			λ = map(i->grids[I].A * high_freq_mode(first(i), grids[I].sz), R_parent)
+			λ² = broadcast(i->broadcast(j->j^2, i), λ)
+			ω = map(i->λ²[i]./sum(λ²),1:length(λ)) # weight factors from [Naik, Van Rosendale]
+			ip = map(i->P̃(first(i), Cubic(), grids[last(i)].sz...) * grids[last(i)].x, R_parent)
+			grids[I].x .= sum(map(i->ω[i].*ip[i], 1:length(ω)))
+		end
     end
     for i in 1:ν₀
-        μ_cycle!(grids,1,ν₁,ν₂,grid_ptr,smoother,damping)
+        μ_cycle!(grids, 1, ν₁, ν₂, grid_ptr, smoother, damping)
     end
 end
