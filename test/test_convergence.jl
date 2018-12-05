@@ -5,7 +5,7 @@
 function get_problem(ϵ,β)
     n = 256
     m = n
-    A = anisotropic2d(ϵ,β*π/180,n,m)
+    A = anisotropic2d(ϵ, β*π/180, n, m)
     A = V_cycle(A, (n,m))
     b = ones((n-1)*(m-1))
     return (A,b)

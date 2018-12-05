@@ -17,7 +17,7 @@ function coarsen(A::SparseMatrixCSC, sz::NTuple, R_op::TransferKind, P_op::Trans
         P_mats = tuple(P̃.(1:d,P_op,sz_c...)...)
         grid_num = i.-δ(argmax(i),d)
         A_c = grids[grid_num...].R[argmax(i)]*grids[grid_num...].A*P_mats[argmax(i)]
-        grids[i...] = Grid(A_c,zero_x(A_c),zero_x(A_c),R_mats,P_mats,sz_c)
+        grids[i...] = Grid(A_c, zero_x(A_c), zero_x(A_c), R_mats, P_mats, sz_c)
     end
     grids
 end
@@ -34,7 +34,7 @@ function coarsen(f::Function, sz::NTuple, R_op::TransferKind, P_op::TransferKind
         P_mats = tuple(P̃.(1:d,P_op,sz_c...)...)
         grid_num = i.-δ(argmax(i),d)
         A_c = f(sz_c...)
-        grids[i...] = Grid(A_c,zero_x(A_c),zero_x(A_c),R_mats,P_mats,sz_c)
+        grids[i...] = Grid(A_c, zero_x(A_c), zero_x(A_c), R_mats, P_mats, sz_c)
     end
     grids
 end
