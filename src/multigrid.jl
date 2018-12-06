@@ -95,7 +95,9 @@ function μ_cycle!(grids::Array{G} where {G<:Grid}, μ::Int, ν₁::Int, ν₂::
 			grids[I].b .= mean(map(i->grids[last(i)].R[first(i)]*residu(grids[last(i)]), R_child))
 			fill!(grids[I].x, zero(eltype(grids[I].x)))
         end
-        μ_cycle!(grids, μ, ν₁, ν₂, grid_ptr+1, smoother)
+		for i in 1:μ
+        	μ_cycle!(grids, μ, ν₁, ν₂, grid_ptr+1, smoother)
+		end
         for I in grids_at_level(R, grid_ptr)
 			R_parent = parent_iter(R, I1, I)
             # matrix-dependent prolongation
