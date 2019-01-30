@@ -2,7 +2,7 @@
 
 for (d,d_name) in zip(2:3,["₂","₃"])
     @testset "Default Multigrid methods for $(d)D anisotropic problems" begin
-        for (problem,problem_name) in zip(["p₁","p₂","p₃","p₄"],["     LAPLACE $(d)D      ","     ELLIPTIC $(d)D     ","   ANISOTROPIC $(d)D    ","ROTATED ANISTROPIC $(d)D"])
+        for (problem, problem_name) in zip(["p₁","p₂","p₃","p₄"],["     LAPLACE $(d)D      ","     ELLIPTIC $(d)D     ","   ANISOTROPIC $(d)D    ","ROTATED ANISTROPIC $(d)D"])
             if !( d == 3 && problem == "p₄" )
                 println("*************************")
                 println("* $(problem_name) *")
