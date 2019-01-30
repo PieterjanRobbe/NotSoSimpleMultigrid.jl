@@ -48,6 +48,12 @@ git-tree-sha1 = "7da3e7e1a58cffbf10177553ae95f17b92516912"
 uuid = "5432bcbf-9aad-5242-b902-cca2824c8663"
 version = "0.4.2"
 
+[[Primes]]
+deps = ["Test"]
+git-tree-sha1 = "ff1a2323cb468ec5f201838fcbe3c232266b1f95"
+uuid = "27ebfcd6-29c5-5fa9-bf4b-fb8fc14df3ae"
+version = "0.4.0"
+
 [[Printf]]
 deps = ["Unicode"]
 uuid = "de0858da-6303-5e67-8744-51eddeeeb8d7"
@@ -72,8 +78,8 @@ version = "0.5.2"
 uuid = "9e88b42a-f829-5b0c-bbe9-9e923198166b"
 
 [[SimpleMultigrid]]
-deps = ["IterativeSolvers", "PaddedViews", "Printf", "Requires", "SparseArrays", "StaticArrays", "Test"]
-git-tree-sha1 = "5ec8b2ecc65432c0a72c2983f848b4749c13ece6"
+deps = ["IterativeSolvers", "LinearAlgebra", "PaddedViews", "Primes", "Printf", "Requires", "SparseArrays", "StaticArrays", "Test"]
+git-tree-sha1 = "900625ba68a28c8c040ea4fe0827b5e59289d049"
 repo-rev = "master"
 repo-url = "https://github.com/PieterjanRobbe/SimpleMultigrid.jl.git"
 uuid = "e8fea2e7-436f-5c48-8914-48864cfb6713"
