@@ -2,7 +2,7 @@
 
 # direct discretization for elliptic and anisotropic problem in 2D/3D
 function get_problem_2d_elliptic(n)
-    A = NotSoSimpleMultigrid.MultigridMethod((n,m)->elliptic2d(f(n+1,m+1)), (n, n), V(3, 2))
+    A = NotSoSimpleMultigrid.MultigridMethod((n, m)->elliptic2d(f(n, m)), (n, n), V(3, 2))
     b = fill(1,(n-1)*(n-1))
     return (A,b)
 end
@@ -48,8 +48,9 @@ end
         log(A,2)
     end
 end
+
 function get_problem_3d_elliptic(n)
-    A = NotSoSimpleMultigrid.MultigridMethod((n,m,k)->elliptic3d(f(n+1,m+1,k+1)), (n, n, n), V(3, 2))
+    A = NotSoSimpleMultigrid.MultigridMethod((n,m,k)->elliptic3d(f(n,m,k)), (n, n, n), V(3, 2))
     b = fill(1,(n-1)*(n-1)*(n-1))
     return (A,b)
 end
@@ -65,7 +66,7 @@ end
 end
 
 function get_problem_3d_anisotropic(n)
-    A = NotSoSimpleMultigrid.MultigridMethod((n,m,k)->anisotropic3d(1e-8,1,n,m,k), (n, n, n), V(3, 2))
+    A = NotSoSimpleMultigrid.MultigridMethod((n,m,k)->anisotropic3d(1e-8, 1, n, m, k), (n, n, n), V(3, 2))
     b = fill(1,(n-1)*(n-1)*(n-1))
     return (A,b)
 end
