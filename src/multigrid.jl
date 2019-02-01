@@ -1,10 +1,10 @@
 # multigrid.jl : define multigrid cycle operations
 
 """
-MultigridMethod(A, sz, cycle_type)
-MultigridMethod(A, sz, cycle_type; kwargs...)
-MultigridMethod(f, sz, cycle_type)
-MultigridMethod(f, sz, cycle_type; kwargs...)
+    MultigridMethod(A, sz, cycle_type)
+    MultigridMethod(A, sz, cycle_type; kwargs...)
+    MultigridMethod(f, sz, cycle_type)
+    MultigridMethod(f, sz, cycle_type; kwargs...)
 
 Geometric Multigrid method of type `cycle_type` for matrix `A`, that results from a discretization of a PDE on [0,1]^d using an `sz`-point mesh. A Galerkin approach is used to compose the coarse matrices, unless a function `f` is provided for direct discretization.
 
@@ -26,8 +26,8 @@ Options
 MultigridMethod(A::Union{AbstractMatrix,Function}, sz::NTuple, cycle_type::MultigridCycle; max_iter::Int=20, R_op::TransferKind=FullWeighting(), P_op::TransferKind=FullWeighting(), ngrids=factor_twos.(sz), smoother::Smoother=GaussSeidel()) = MultigridIterable(coarsen(A, sz, R_op, P_op, ngrids), max_iter, cycle_type, smoother, Vector{Float64}(undef, 0))
 
 """
-V_cycle(A, sz)
-V_cycle(A, sz; kwargs...)
+    V_cycle(A, sz)
+    V_cycle(A, sz; kwargs...)
 
 Geometric semicoarsened Multigrid V(2,1)-cycle for matrix `A`, that results from a discretization of a PDE on [0,1]^d using an `sz`-point mesh.
 
@@ -41,8 +41,8 @@ For other options, see `MultigridMethod`.
 V_cycle(A::Union{AbstractMatrix,Function}, sz::NTuple; kwargs...) = MultigridMethod(A, sz, V(); kwargs...)
 
 """
-W_cycle(A, sz)
-W_cycle(A, sz; kwargs...)
+    W_cycle(A, sz)
+    W_cycle(A, sz; kwargs...)
 
 Geometric semicoarsened Multigrid W(2,1)-cycle for matrix `A`, that results from a discretization of a PDE on [0,1]^d using an `sz`-point mesh.
 
@@ -56,8 +56,8 @@ For other options, see `MultigridMethod`.
 W_cycle(A::Union{AbstractMatrix,Function}, sz::NTuple; kwargs...) = MultigridMethod(A, sz, W(); kwargs...)
 
 """
-F_cycle(A, sz)
-F_cycle(A, sz; kwargs...)
+    F_cycle(A, sz)
+    F_cycle(A, sz; kwargs...)
 
 Geometric semicoarsened Full Multigrid for matrix `A`, that results from a discretization of a PDE on [0,1]^d using an `sz`-point mesh.
 
