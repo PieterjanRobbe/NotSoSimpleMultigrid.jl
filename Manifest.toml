@@ -2,7 +2,7 @@
 
 julia_version = "1.11.6"
 manifest_format = "2.0"
-project_hash = "7c38451aee1ca214ec485adf77caf8dd9e38953e"
+project_hash = "515a93bd05157a6310c5ec838bba00b6e0b5bd4c"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -128,11 +128,11 @@ version = "1.11.0"
 
 [[deps.SimpleMultigrid]]
 deps = ["IterativeSolvers", "LinearAlgebra", "PaddedViews", "Primes", "Printf", "Requires", "SparseArrays", "StaticArrays", "Test"]
-git-tree-sha1 = "87f8e8eafd5e5d296699f8c1292e327f0a1e43b1"
+git-tree-sha1 = "eb5ec726fe88717a5c1f969c15a087e4cfbb3ce8"
 repo-rev = "master"
 repo-url = "https://github.com/PieterjanRobbe/SimpleMultigrid.jl.git"
 uuid = "e8fea2e7-436f-5c48-8914-48864cfb6713"
-version = "1.0.2"
+version = "1.1.0"
 
 [[deps.SparseArrays]]
 deps = ["Libdl", "LinearAlgebra", "Random", "Serialization", "SuiteSparse_jll"]
